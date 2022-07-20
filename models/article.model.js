@@ -21,7 +21,6 @@ const articleSchema = new mongoose.Schema(
     },
     pictures: {
       type: [String],
-      required: true,
     },
   },
   {
