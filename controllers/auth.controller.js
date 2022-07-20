@@ -1,5 +1,5 @@
 const Users = require("../models/user.model");
-const bcrypt = require("bcrypt");
+const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const authCtrl = {
@@ -16,7 +16,7 @@ const authCtrl = {
       if (user_email)
         return res.status(400).json({ msg: "This email already exists." });
 
-      const passwordHash = await bcrypt.hash(password, 12);
+      const passwordHash = await bcryptjs.hash(password, 12);
 
       const newUser = new Users({
         fullName,
@@ -52,7 +52,7 @@ const authCtrl = {
       if (!user_email)
         return res.status(400).json({ msg: "Email tidak terdaftar." });
 
-      const isMatch = await bcrypt.compare(password, user_email.password);
+      const isMatch = await bcryptjs.compare(password, user_email.password);
 
       if (!isMatch)
         return res.status(400).json({ msg: "Password tidak benar." });
