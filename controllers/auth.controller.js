@@ -81,6 +81,39 @@ const authCtrl = {
     }
   },
 
+  changePassword: async (req, res) => {
+    try {
+      const { email, newPassword, oldPassword } = req.body;
+
+      const user_email = await Users.findOne({ email: email });
+
+      if (!user_email)
+        return res.status(400).json({ msg: "Email tidak terdaftar." });
+
+      const isMatch = await bcryptjs.compare(oldPassword, user_email.password);
+
+      if (!isMatch) {
+        return res.status(400).json({ msg: "Password tidak benar." });
+      } else {
+        const newPasswordHash = await bcryptjs.hash(newPassword, 12);
+
+        await user_email.updateOne({
+          password: newPasswordHash,
+        });
+      }
+
+      res.json({
+        msg: "Password Changed",
+        data: {
+          oldPassword: oldPassword,
+          newPassword: newPassword,
+        },
+      });
+    } catch (err) {
+      return res.status(500).json({ msg: err.message });
+    }
+  },
+
   generateAccessTokenMobile: async (req, res) => {
     try {
       const { rf_token } = req.body;
